@@ -1,13 +1,6 @@
-
-struct acc
+#include "comm.h"
+struct lexical_analyzer_t
 {
-	struct tk
-	{
-		string s;
-		int n;
-		int p;
-		int line;
-	}ttmp;
 	int isnum(char c)   //判断是否是数字
 	{
 		return c>='0'&&c<='9';
@@ -105,10 +98,9 @@ struct acc
 		//s[n]=0;
 		return string(c,c+n);
 	}
-	vector <tk> token;
-	typedef char* cptr;
+	vector <token_t> token;
 
-	int run(char *s,cptr &out,vector<tk> &tok)
+	int run(char *s,cptr &out,vector<token_t> &tok)
 	{
 		int i,j,k;
 		static string output;
@@ -128,6 +120,7 @@ struct acc
 		//gets(s);
 		int l=strlen(s);
 		int line=0;
+		token_t ttmp;
 		for(i=0;i<l;i+=0)//分析s
 		{
 			int r=0;

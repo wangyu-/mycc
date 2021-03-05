@@ -1,40 +1,16 @@
 #include "comm.h"
-struct syntax
+struct syntax_analyzer_t
 {
-	vector <acc::tk> token;
+	vector <token_t> token;
 	char * _s0;
-	struct grammar;
-	typedef grammar* gptr;
-	struct grammar
-	{
-		string n;
-		int v;
-		int p;//格式,横排 竖排
-		//quater *qp;
-		vector <gptr> l;
-		void c()
-		{
-			n="";
-			v=0;
-			p=0;
-			l.clear();
-		}
-		grammar()
-		{
-			n="";
-			v=0;
-			p=0;
-			l.clear();
-		}
-	};
-
-	typedef char* cptr;
 	int asm0;
 	map<string,string> asm_mp;
-	syntax()
+
+	syntax_analyzer_t()
 	{
 		asm0=-1;
 	}
+
 	string gen_asm()
 	{
 		asm0++;
@@ -70,7 +46,7 @@ struct syntax
 	}
 	int okop/*表达式语句*/(cptr &s,gptr &g)
 	{
-		g=new grammar;
+		g=new grammar_t;
 		gptr gt;
 		g->n="expression_statement";
 		cptr t=s;
@@ -84,7 +60,7 @@ struct syntax
 	}
 	int tb/*变量声明区*/(cptr &s,gptr &g)
 	{
-		g=new grammar;
+		g=new grammar_t;
 		g->n="var_declare_zone";
 		gptr gt;
 		while(okts(s,gt)) {g->l.push_back(gt);}
@@ -92,7 +68,7 @@ struct syntax
 	}
 	int fb/*函数区*/(cptr &s,gptr &g)
 	{
-		g=new grammar;
+		g=new grammar_t;
 		g->n="function_zone";
 		gptr gt;
 		while(okfs(s,gt)) {g->l.push_back(gt);}
@@ -101,13 +77,13 @@ struct syntax
 	int okif/*if语句*/(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;gptr gt;
+		g=new grammar_t;gptr gt;
 		g->n="if_statement";
 		if(rd(s,'i'))
 			if(rd(s,'('))
 				if(okS(s,gt))
 				{
-					gptr g2=new grammar;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);
+					gptr g2=new grammar_t;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);
 					//g->l.push_back(gt);
 					//运算语句
 					if(rd(s,')'))
@@ -130,20 +106,20 @@ struct syntax
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="for";
 		if(rd(s,"f("))
 		{
-			if(okS(s,gt)){gptr g2=new grammar;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);}
-			else {gptr g2=new grammar;g2->n="empty";g->l.push_back(g2);}
+			if(okS(s,gt)){gptr g2=new grammar_t;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);}
+			else {gptr g2=new grammar_t;g2->n="empty";g->l.push_back(g2);}
 			if(rd(s,';'))
 			{
-				if(okS(s,gt)) {gptr g2=new grammar;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);}
-				else {gptr g2=new grammar;g2->n="empty";g->l.push_back(g2);}
+				if(okS(s,gt)) {gptr g2=new grammar_t;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);}
+				else {gptr g2=new grammar_t;g2->n="empty";g->l.push_back(g2);}
 				if(rd(s,';'))
 				{
-					if(okS(s,gt)) {gptr g2=new grammar;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);}
-					else {gptr g2=new grammar;g2->n="empty";g->l.push_back(g2);}
+					if(okS(s,gt)) {gptr g2=new grammar_t;g2->n="expression";g->l.push_back(g2);g2->l.push_back(gt);}
+					else {gptr g2=new grammar_t;g2->n="empty";g->l.push_back(g2);}
 					if(rd(s,')'))
 					{
 						if(oks(s,gt)){g->l.push_back(gt); return 1;}
@@ -156,7 +132,7 @@ struct syntax
 	int okms(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="block_statement";
 		gptr gt;
 		if(rd(s,'{'))
@@ -170,14 +146,14 @@ struct syntax
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="return";
 		if(rd(s,'r'))
 		{
 
 			if(okS(s,gt))
 			{
-				gptr g2=new grammar;
+				gptr g2=new grammar_t;
 				g2->n="expression";
 				g2->l.push_back(gt);
 				g->l.push_back(g2);
@@ -192,7 +168,7 @@ struct syntax
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="continue";
 		if(rd(s,'c'))
 		{
@@ -206,7 +182,7 @@ struct syntax
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="break";
 		if(rd(s,'b'))
 		{
@@ -219,10 +195,10 @@ struct syntax
 	int oklb(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="label";
 		gptr g1;
-		g1=new grammar;
+		g1=new grammar_t;
 		// g1->n=token[s-_s0].s; //原位置 有bug
 		//g->l.push_back(g1);
 		if(rd(s,'w'))
@@ -237,10 +213,10 @@ struct syntax
 	int okgt(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="goto";
 		gptr g1;
-		g1=new grammar;
+		g1=new grammar_t;
 
 		if(rd(s,'g'))
 		{
@@ -258,13 +234,13 @@ struct syntax
 	int okasm(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="asm_statement";
 		gptr g2;
 		if(rd(s,'#'))
 		{
 			string t1=gen_asm();
-			g2=new grammar;
+			g2=new grammar_t;
 			g2->n=t1;
 			g->l.push_back(g2);
 			string t2=token[s-_s0-1].s;
@@ -276,7 +252,7 @@ struct syntax
 	int oks(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="undecided_statement";
 		gptr gt;
 		if(okasm(s,gt)){g=gt;return 1;}
@@ -290,7 +266,7 @@ struct syntax
 		if(okre(s,gt)) {g=gt;return 1;}
 		if(okctn(s,gt)){g=gt;return 1;}
 		if(okbrk(s,gt)){g=gt;return 1;}
-		if(rd(s,';')){g=new grammar;g->n="empty_statement";return 1;}
+		if(rd(s,';')){g=new grammar_t;g->n="empty_statement";return 1;}
 		s=t;
 		return 0;
 	}
@@ -299,7 +275,7 @@ struct syntax
 
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="statement_zone";
 		while(oks(s,gt)) g->l.push_back(gt);
 
@@ -309,7 +285,7 @@ struct syntax
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="program";
 		//line1:
 		//	int sign=0;
@@ -346,7 +322,7 @@ line1:
 				g=gt;g->l.push_back(gt1);
 				while(rd(s,"[@]"))
 				{
-					gt1=new grammar;
+					gt1=new grammar_t;
 					gt1->n=token[s-_s0-2].s;
 					g->l.push_back(gt1);
 				}
@@ -359,7 +335,7 @@ line1:
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="parameter_list";
 		if(okfe(s,gt))
 		{
@@ -376,7 +352,7 @@ line1:
 	int okfs/*函数*/(cptr &s,gptr &g)
 	{
 		cptr t=s;
-		g=new grammar;gptr gt;
+		g=new grammar_t;gptr gt;
 		//g->n="function";
 		if(okt(s,gt))
 		{
@@ -407,7 +383,7 @@ line1:
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		if(rd(s,'l')){while(rd(s,'*')); g->n="int";return 1;}//忽略掉所有*
 		s=t;return 0;
 	}
@@ -415,7 +391,7 @@ line1:
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n=token[int(s-_s0)].s;
 		if(rd(s,'w')) {return 1;}
 		s=t;return 0;
@@ -432,7 +408,7 @@ line1:
 				g=gt;g->l.push_back(gt1);
 				while(rd(s,"[@]"))
 				{
-					gt1=new grammar;
+					gt1=new grammar_t;
 					gt1->n=token[s-_s0-2].s;
 					g->l.push_back(gt1);
 				}
@@ -447,7 +423,7 @@ line1:
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		if(rd(s,'w'))
 		{
 			g->n=token[s-_s0-1].s;
@@ -465,7 +441,7 @@ line1:
 	{
 		cptr t=s;
 		gptr gt;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="parameter";
 		if(okS(s,gt))
 		{
@@ -493,7 +469,7 @@ line1:
 			{
 				if(okA(s,gt))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n=o;
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -519,7 +495,7 @@ line1:
 			{
 				if(okE(s,gt))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n=o;
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -545,7 +521,7 @@ line1:
 			{
 				if(okF(s,gt))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n=o;
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -571,7 +547,7 @@ line1:
 			{
 				if(okH(s,gt))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n=o;
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -597,7 +573,7 @@ line1:
 			{
 				if(okI(s,gt))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n=o;
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -623,7 +599,7 @@ line1:
 			{
 				if(okJ(s,gt))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n=o;
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -645,7 +621,7 @@ line1:
 		if(rd(s,"!",o)||rd(s,"&",o)||rd(s,"*",o))
 			if(okL(s,gt))
 			{
-				g=new grammar;
+				g=new grammar_t;
 				g->n=o;
 				g->l.push_back(gt);
 				return 1;
@@ -664,7 +640,7 @@ line1:
 				if(okS(s,gt2))
 					if(rd(s,']'))
 					{
-						g=new grammar;
+						g=new grammar_t;
 						g->n="[]";
 						g->l.push_back(gt);
 						g->l.push_back(gt2);
@@ -687,7 +663,7 @@ line1:
 				cptr t2=s;
 				if(okS(s,gt)&&rd(s,']'))
 				{
-					g2=new grammar;
+					g2=new grammar_t;
 					g2->n="[]";
 					g2->l.push_back(g1);
 					g2->l.push_back(gt);
@@ -708,7 +684,7 @@ line1:
 	}
 	int okZ(cptr &s,gptr &g)
 	{
-		g=new grammar;
+		g=new grammar_t;
 		cptr t=s;
 		gptr gt;
 		if(rd(s,'@')) {g->n=token[s-_s0-1].s;return 1;}
@@ -731,17 +707,17 @@ line1:
 	{
 		cptr t=s;
 		gptr g1;
-		g=new grammar;
+		g=new grammar_t;
 		g->n="array_constant";
 		if(rd(s,'{'))
 			if(rd(s,'@'))
 			{
-				g1=new grammar;
+				g1=new grammar_t;
 				g1->n=token[s-_s0-1].s;
 				g->l.push_back(g1);
 				while(rd(s,",@"))
 				{
-					g1=new grammar;
+					g1=new grammar_t;
 					g1->n=token[s-_s0-1].s;
 					g->l.push_back(g1);
 				}
@@ -761,9 +737,10 @@ line1:
 		}
 		return 0;
 	}
-	int run(char *s,vector <acc::tk> token2,gptr &gm)
+	int run(char *s,vector <token_t> token_in,gptr &gm)
 	{
-		token=token2;
+		printf("<<<%s>>>",s);
+		token=token_in;
 		_s0=s;
 		int sign=1;
 		if(okproc(s,gm)&&(*s)==0)

@@ -1,6 +1,6 @@
+#pragma once
 #include "comm.h"
-typedef syntax::gptr gptr;
-struct sytbl
+struct symbol_table_t
 {
 	int addr0;
 	int count;
@@ -8,32 +8,16 @@ struct sytbl
 	int count3;
 	int count4;
 	int count5;
-	struct type
-	{
-		string s;
-		int addr;
-		string func;
-		vector <string> para;
-		int n;
-		void clear()
-		{
-			n=0;
-			s="";
-			addr=-1;
-			func="";
-			para.clear();
-		}
-	};
-	map<string,type> gv;//全局变量
+	map<string,var_type_t> gv;//全局变量
 	//map<string,type> fn;//函数名称
-	void ins(string s,type t)
+	void ins(string s,var_type_t t)
 	{
 		if(gv.find(s)!=gv.end()) {printf("identifier %s name not unique\n",s.c_str());exit(-1) ;}
 		else
 		{
 			addr0++;
 			t.addr=addr0;
-			gv.insert(pair<string,type>(s,t));
+			gv.insert(pair<string,var_type_t>(s,t));
 		}
 	}
 	void cut_tree(gptr gm)//简化语法树
@@ -61,7 +45,7 @@ struct sytbl
 	}
 	void prt()
 	{
-		map<string,type>::iterator i;
+		map<string,var_type_t>::iterator i;
 		int j;
 		printf("var list:\n");
 		for(i=gv.begin();i!=gv.end();i++)
@@ -79,7 +63,7 @@ struct sytbl
 		//addr0++;
 		char s[100];
 		string r="?t";
-		type typetmp;
+		var_type_t typetmp;
 		typetmp.s="tmp_int";
 		typetmp.func=now;
 		//typetmp.addr=addr0;
@@ -94,7 +78,7 @@ struct sytbl
 		//addr0++;
 		char s[100];
 		string r="?q";
-		type typetmp;
+		var_type_t typetmp;
 		typetmp.s="quo_int";
 		typetmp.func=now;
 		sprintf(s,"%d",count3);
@@ -108,7 +92,7 @@ struct sytbl
 		//addr0++;
 		char s[100];
 		string r="?lb";
-		type typetmp;
+		var_type_t typetmp;
 		typetmp.s="temp_label";
 		//typetmp.addr=addr0;
 		sprintf(s,"%d",count2);
@@ -122,7 +106,7 @@ struct sytbl
 		//addr0++;
 		char s[100];
 		string r="?s";
-		type typetmp;
+		var_type_t typetmp;
 		typetmp.s="string_constant";
 		//typetmp.addr=addr0;
 		sprintf(s,"%d",count4);
@@ -136,7 +120,7 @@ struct sytbl
 		count5++;
 		char s[100];
 		string r="?arr";
-		type typetmp;
+		var_type_t typetmp;
 		typetmp.s="array_constant";
 		//typetmp.addr=addr0;
 		sprintf(s,"%d",count5);
@@ -145,7 +129,7 @@ struct sytbl
 		ins(r,typetmp);
 		return r;
 	}
-	sytbl()
+	symbol_table_t()
 	{
 		count=-1;
 		count2=-1;
@@ -169,7 +153,7 @@ struct sytbl
 	void makelist(gptr gm)
 	{
 		vector <gptr>::iterator it,it2;
-		type tmptype;
+		var_type_t tmptype;
 		for(it=gm->l[0]->l.begin();it!=gm->l[0]->l.end();it++)
 		{
 			tmptype.clear();
@@ -278,7 +262,7 @@ struct sytbl
 		}
 		else if(gm->n=="label")
 		{
-			type typetmp;
+			var_type_t typetmp;
 			typetmp.s="label";
 			ins(gm->l[0]->n,typetmp);
 			return ;

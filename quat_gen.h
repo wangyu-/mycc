@@ -1,7 +1,8 @@
 #include "comm.h"
-sytbl *_st;
-struct quater
+#include "sytbl.h"
+struct quat_gen_t
 {
+	symbol_table_t *_st;
 	struct loop
 	{
 		string ctn;
@@ -10,28 +11,24 @@ struct quater
 	string now_func;
 	stack<loop> loopstack;
 	// string creat(gptr gm);
-	struct sb
-	{
-		string s1,s2,s3,s4;
-	};
-	vector <sb> sub;
+	vector <quat_t> quat;
 	string result;
 	void clear()
 	{
-		sub.clear();
+		quat.clear();
 	}
 	void ins(string s1,string s2,string s3,string s4)
 	{
-		sb temp;
+		quat_t temp;
 		temp.s1=s1;temp.s2=s2;temp.s3=s3;temp.s4=s4;
-		sub.push_back(temp);
+		quat.push_back(temp);
 	}
 	void prt()
 	{
-		vector<sb>::iterator it;
+		vector<quat_t>::iterator it;
 		printf("\n");
 		printf("Quaternion:\n");
-		for(it=sub.begin();it!=sub.end();it++)
+		for(it=quat.begin();it!=quat.end();it++)
 		{
 			printf(">quat(%s,%s,%s,%s)\n",(it)->s1.c_str(),(it)->s2.c_str(),(it)->s3.c_str(),(it)->s4.c_str());
 		}
@@ -259,8 +256,9 @@ struct quater
 		ins("ret/func"," "," ",gm->n);
 		return "";
 	}
-	string proc(gptr gm)
+	string proc(gptr gm,symbol_table_t &st)
 	{
+		_st=&st;
 		int i;
 		//ins("call"," "," ","main");
 		//ins("rts"," "," "," ");
