@@ -23,34 +23,34 @@ struct asm_gen_t
 		if(pos==string::npos) return s;
 		return s.substr(0,pos);
 	}
-	string mod(string s)
+	string mod(string s) //generate operand
 	{
 		if(s=="[ebx]")
 			return s;
 		if(s.length()>2)
 		{
-			if(s[0]=='?'&&s[1]=='q')
+			if(s[0]=='?'&&s[1]=='q')//it's a variable related to pointer
 			{
 				string r;
-				write_asm("mov ebx,[%s]\n",s.c_str());
+				write_asm("mov ebx,[%s]\n",s.c_str());   //indirect addressing
 				r="?";
-				return "[ebx]";
+				return "[ebx]"; //another indirect addressing
 			}
 
 		}
 		if(s.length()>=1)
 		{
-			if(s[0]=='\''||s[0]>='0'&&s[0]<='9')
+			if(s[0]=='\''||s[0]>='0'&&s[0]<='9')  //it's integer or char
 			{
 				return s;
 			}
-			else
+			else//it's a normal variable
 			{
 				string r="[";
 				r+="$";
 				r+=s;
 				r+="]";
-				return r;
+				return r;   //only one indirect addressing
 			}
 		}
 		return s;
@@ -418,3 +418,8 @@ struct asm_gen_t
 		return 0;
 	}
 };
+int asm_code_gen(const map<string,string> &asmmp,const map<string,var_type_t> &vb,const vector<quat_t> &quat,asm_format_t asm_format,string output_name)
+{
+	asm_gen_t asm_gen;
+	return asm_gen.run(asmmp,vb,quat,asm_format,output_name);
+}

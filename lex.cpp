@@ -1,19 +1,19 @@
 #include "comm.h"
 struct lexical_analyzer_t
 {
-	int isnum(char c)   //判断是否是数字
+	int isnum(char c)   //判断是否是数字     //is number
 	{
 		return c>='0'&&c<='9';
 	}
-	int islet(char c)  //判断是否是英文字母或下滑线
+	int islet(char c)  //判断是否是英文字母或下滑线  //is letter or underscore
 	{
 		return c=='_'||c>='a'&&c<='z'||c>='A'&&c<='Z';
 	}
-	int issy(char c)   //判断是符号
+	int issy(char c)   //判断是符号 //is symbol
 	{
 		return c=='.'||c=='+'||c=='-'||c=='*'||c=='/'||c=='='||c=='>'||c=='<'||c=='!'||c=='|'||c=='&'||c=='%'||c=='~'||c=='('||c==')'||c=='{'||c=='}'||c==';'||c==','||c=='['||c==']'||c==':';
 	}
-	int ifconstant(char *c) //如果c所指向的文本是常数,返回常数占的长度,否则返回
+	int ifconstant(char *c) //如果c所指向的文本是常数,返回常数占的长度,否则返回0
 	{
 		int i,j,k;
 		if(c[0]=='\"')
@@ -66,7 +66,7 @@ struct lexical_analyzer_t
 		if(memcmp(c,"__asm",5)!=0) return 0;
 		return 5;
 	}
-	int note1(char *c)
+	int note1(char *c)  //single line comment
 	{
 		int i;
 		if(memcmp(c,"//",2)==0)
@@ -76,7 +76,7 @@ struct lexical_analyzer_t
 		}
 		return 0;
 	}
-	int note2(char *c,int &n)
+	int note2(char *c,int &n) //multi line comment
 	{
 		int i;
 		n=0;
@@ -235,3 +235,10 @@ struct lexical_analyzer_t
 		return 0;
 	}
 };
+
+int lexical_analyze(char *s,cptr &out,vector<token_t> &tok)
+{
+	lexical_analyzer_t lexical_analyzer;
+	lexical_analyzer.run(s,out,tok);
+	return 0;
+}

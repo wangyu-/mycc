@@ -1,10 +1,10 @@
 #include "comm.h"
 struct syntax_analyzer_t
 {
-	vector <token_t> token;
-	char * _s0;
-	int asm0;
-	map<string,string> asm_mp;
+	vector <token_t> token; //token from lexical_analyzer
+	char * _s0; //original char begining for input s
+	int asm0;  //counter to generate name for asm block
+	map<string,string> asm_mp;  //table for embedded asm code
 
 	syntax_analyzer_t()
 	{
@@ -44,7 +44,7 @@ struct syntax_analyzer_t
 		if(memcmp(s,c,l)==0)  {s+=l;return 1;}
 		return 0;
 	}
-	int okop/*表达式语句*/(cptr &s,gptr &g)
+	int okop/*表达式语句*/(cptr &s,gptr &g) //expression_statement
 	{
 		g=new grammar_t;
 		gptr gt;
@@ -58,7 +58,7 @@ struct syntax_analyzer_t
 			}
 		s=t;return 0;
 	}
-	int tb/*变量声明区*/(cptr &s,gptr &g)
+	int tb/*变量声明区*/(cptr &s,gptr &g) //variable declare zone
 	{
 		g=new grammar_t;
 		g->n="var_declare_zone";
@@ -66,7 +66,7 @@ struct syntax_analyzer_t
 		while(okts(s,gt)) {g->l.push_back(gt);}
 		return 1;
 	}
-	int fb/*函数区*/(cptr &s,gptr &g)
+	int fb/*函数区*/(cptr &s,gptr &g) // function zone
 	{
 		g=new grammar_t;
 		g->n="function_zone";
@@ -74,7 +74,7 @@ struct syntax_analyzer_t
 		while(okfs(s,gt)) {g->l.push_back(gt);}
 		return 1;
 	}
-	int okif/*if语句*/(cptr &s,gptr &g)
+	int okif/*if语句*/(cptr &s,gptr &g) //if statement
 	{
 		cptr t=s;
 		g=new grammar_t;gptr gt;
@@ -102,7 +102,7 @@ struct syntax_analyzer_t
 				}
 		s=t;return 0;
 	}
-	int okfor/*for语句*/(cptr &s,gptr &g)
+	int okfor/*for语句*/(cptr &s,gptr &g) // for statement
 	{
 		cptr t=s;
 		gptr gt;
@@ -129,7 +129,7 @@ struct syntax_analyzer_t
 		}
 		s=t;return 0;
 	}
-	int okms(cptr &s,gptr &g)
+	int okms(cptr &s,gptr &g) //code block
 	{
 		cptr t=s;
 		g=new grammar_t;
@@ -142,7 +142,7 @@ struct syntax_analyzer_t
 		}
 		s=t;return 0;
 	}
-	int okre(cptr &s,gptr &g)
+	int okre(cptr &s,gptr &g)//return
 	{
 		cptr t=s;
 		gptr gt;
@@ -164,7 +164,7 @@ struct syntax_analyzer_t
 		s=t;
 		return 0;
 	}
-	int okctn(cptr &s,gptr &g)
+	int okctn(cptr &s,gptr &g)//continue
 	{
 		cptr t=s;
 		gptr gt;
@@ -178,7 +178,7 @@ struct syntax_analyzer_t
 		s=t;
 		return 0;
 	}
-	int okbrk(cptr &s,gptr &g)
+	int okbrk(cptr &s,gptr &g)//break
 	{
 		cptr t=s;
 		gptr gt;
@@ -192,7 +192,7 @@ struct syntax_analyzer_t
 		s=t;
 		return 0;
 	}
-	int oklb(cptr &s,gptr &g)
+	int oklb(cptr &s,gptr &g)//label
 	{
 		cptr t=s;
 		g=new grammar_t;
@@ -210,7 +210,7 @@ struct syntax_analyzer_t
 			}
 		s=t;return 0;
 	}
-	int okgt(cptr &s,gptr &g)
+	int okgt(cptr &s,gptr &g)//goto
 	{
 		cptr t=s;
 		g=new grammar_t;
@@ -231,7 +231,7 @@ struct syntax_analyzer_t
 		}
 		s=t;return 0;
 	}
-	int okasm(cptr &s,gptr &g)
+	int okasm(cptr &s,gptr &g)//embed asm
 	{
 		cptr t=s;
 		g=new grammar_t;
@@ -249,7 +249,7 @@ struct syntax_analyzer_t
 		}
 		s=t;return 0;
 	}
-	int oks(cptr &s,gptr &g)
+	int oks(cptr &s,gptr &g)//statement
 	{
 		cptr t=s;
 		g=new grammar_t;
@@ -270,7 +270,7 @@ struct syntax_analyzer_t
 		s=t;
 		return 0;
 	}
-	int sb(cptr &s,gptr &g)/*语句区*/
+	int sb/*语句区*/(cptr &s,gptr &g) //statement zone
 	{
 
 		cptr t=s;
@@ -281,7 +281,7 @@ struct syntax_analyzer_t
 
 		return 1;
 	}
-	int okproc/*程序*/(cptr &s,gptr &g)
+	int okproc/*程序*/(cptr &s,gptr &g) //the whole program
 	{
 		cptr t=s;
 		gptr gt;
@@ -310,7 +310,7 @@ line1:
 		//if(okft(s,gt)) g->l.push_back(gt);
 		return 1;
 	}
-	int okfe/*变量声明*/(cptr &s,gptr &g)
+	int okfe/*变量声明*/(cptr &s,gptr &g) //variable declare zone
 	{
 		cptr t=s;
 		gptr gt,gt1;
@@ -331,7 +331,7 @@ line1:
 		}
 		s=t;g=0;return 0;
 	}
-	int okfl/*函数参数表*/(cptr &s,gptr &g)
+	int okfl/*函数参数表*/(cptr &s,gptr &g) //function parameter list
 	{
 		cptr t=s;
 		gptr gt;
@@ -349,7 +349,7 @@ line1:
 		}
 		s=t;return 1;//一定能接受
 	}
-	int okfs/*函数*/(cptr &s,gptr &g)
+	int okfs/*函数*/(cptr &s,gptr &g) //function
 	{
 		cptr t=s;
 		g=new grammar_t;gptr gt;
@@ -379,7 +379,7 @@ line1:
 		}
 		s=t;return 0;
 	}
-	int okt/*数据类型*/(cptr &s,gptr &g)/*类型*/
+	int okt/*数据类型*/(cptr &s,gptr &g) //data type
 	{
 		cptr t=s;
 		gptr gt;
@@ -387,7 +387,7 @@ line1:
 		if(rd(s,'l')){while(rd(s,'*')); g->n="int";return 1;}//忽略掉所有*
 		s=t;return 0;
 	}
-	int okse/*变量名*/(cptr &s,gptr &g)
+	int okse/*变量名*/(cptr &s,gptr &g)//variable name
 	{
 		cptr t=s;
 		gptr gt;
@@ -396,7 +396,7 @@ line1:
 		if(rd(s,'w')) {return 1;}
 		s=t;return 0;
 	}
-	int okts/*变量声明*/(cptr &s,gptr &g)
+	int okts/*变量声明*/(cptr &s,gptr &g)//variable declare
 	{
 		cptr t=s;
 		gptr gt,gt1;
@@ -419,7 +419,7 @@ line1:
 	}
 
 
-	int okft/*函数调用*/(cptr &s,gptr &g)
+	int okft/*函数调用*/(cptr &s,gptr &g)//function call
 	{
 		cptr t=s;
 		gptr gt;
@@ -437,7 +437,7 @@ line1:
 		}
 		s=t;return 0;
 	}
-	int okftl/*函数调用参数表*/(cptr &s,gptr &g)
+	int okftl/*函数调用参数表*/(cptr &s,gptr &g)//function call parameter list
 	{
 		cptr t=s;
 		gptr gt;
@@ -682,14 +682,14 @@ line1:
 		s=t;
 		return 0;
 	}
-	int okZ(cptr &s,gptr &g)
+	int okZ(cptr &s,gptr &g)//terminate elements, or expression inside parenthesis
 	{
 		g=new grammar_t;
 		cptr t=s;
 		gptr gt;
-		if(rd(s,'@')) {g->n=token[s-_s0-1].s;return 1;}
-		if(rd(s,'$')) {g->n=token[s-_s0-1].s;return 1;}
-		if(rd(s,'('))
+		if(rd(s,'@')) {g->n=token[s-_s0-1].s;return 1;}  //number
+		if(rd(s,'$')) {g->n=token[s-_s0-1].s;return 1;}  //char const
+		if(rd(s,'('))   //expression inside operator
 			if(okS(s,gt))
 				if(rd(s,')'))
 				{
@@ -697,13 +697,13 @@ line1:
 					return 1;
 				}
 		s=t;
-		if(okft(s,gt)) {g=gt;return 1;}
-		if(rd(s,'w')) {g->n=token[s-_s0-1].s;return 1;}
+		if(okft(s,gt)) {g=gt;return 1;} //function call
+		if(rd(s,'w')) {g->n=token[s-_s0-1].s;return 1;}  //variable name
 		s=t;
-		if(okZZ(s,gt)) {g=gt;return 1;}
+		if(okZZ(s,gt)) {g=gt;return 1;} //array constant
 		s=t;return 0;
 	}
-	int okZZ(cptr &s,gptr &g)
+	int okZZ(cptr &s,gptr &g)//array constant
 	{
 		cptr t=s;
 		gptr g1;
@@ -737,9 +737,8 @@ line1:
 		}
 		return 0;
 	}
-	int run(char *s,vector <token_t> token_in,gptr &gm)
+	int run(char *s,const vector <token_t> &token_in,gptr &gm)
 	{
-		printf("<<<%s>>>",s);
 		token=token_in;
 		_s0=s;
 		int sign=1;
@@ -755,3 +754,11 @@ line1:
 		return sign;
 	}
 };
+
+int syntax_analyze(char *s,const vector <token_t> &token_in,gptr &gm, map<string,string> &asm_mp)
+{
+	struct syntax_analyzer_t syntax_analyzer;
+	syntax_analyzer.run(s,token_in,gm);
+	asm_mp=syntax_analyzer.asm_mp;
+	return 0;
+}
