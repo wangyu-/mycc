@@ -32,7 +32,7 @@ struct asm_gen_t
 			if(s[0]=='?'&&s[1]=='q')//it's a variable related to pointer
 			{
 				string r;
-				write_asm("mov ebx,[%s]\n",s.c_str());   //indirect addressing
+				write_asm("mov ebx,[$%s]\n",s.c_str());   //indirect addressing
 				r="?";
 				return "[ebx]"; //another indirect addressing
 			}
@@ -132,6 +132,31 @@ struct asm_gen_t
 			write_asm("mov [%s],eax\n",arr[i].c_str());
 		}
 		write_asm("ret\n\n");
+
+		write_asm("_?batch_push:\n");
+		write_asm("pop ecx\n");
+		write_asm("_?batch_push_l1:\n");
+		write_asm("push dword [eax]\n");
+		write_asm("add eax,4\n");
+		write_asm("dec ebx\n");
+		write_asm("jnz _?batch_push_l1\n");
+		write_asm("push ecx\n");
+		write_asm("ret\n\n");
+
+		write_asm("_?batch_pop:\n");
+		write_asm("pop ecx\n");
+		write_asm("add eax,ebx\n");
+		write_asm("add eax,ebx\n");
+		write_asm("add eax,ebx\n");
+		write_asm("add eax,ebx\n");
+		write_asm("_?batch_pop_l1:\n");
+		write_asm("sub eax,4\n");
+		write_asm("pop dword [eax]\n");
+		write_asm("dec ebx\n");
+		write_asm("jnz _?batch_pop_l1\n");
+		write_asm("push ecx\n");
+		write_asm("ret\n\n");
+
 		for(it=quat.begin();it!=quat.end();it++)
 		{
 			if(cut(it->s1)=="call") write_asm("call %s\n",it->s4.c_str());
@@ -147,8 +172,15 @@ struct asm_gen_t
 				{
 					if(it3->second.func==it->s4)
 					{
-						write_asm("mov eax,[%s]\n",it3->first.c_str());//push,pop的总是变量的内容
-						write_asm("push eax\n");
+						write_asm("push dword [$%s]\n",it3->first.c_str());//push,pop的总是变量的内容
+						//write_asm("push eax\n");
+						if(it3->second.s=="int_arr"&&it3->second.n!=0)
+						{
+							write_asm("mov eax,$arr?%s\n",it3->first.c_str());
+							write_asm("mov ebx,%d\n",it3->second.n);
+							write_asm("call _?batch_push\n");
+						}
+						
 					}
 				}
 			}
@@ -160,8 +192,14 @@ struct asm_gen_t
 					it3--;
 					if(it3->second.func==it->s4)
 					{
-						write_asm("pop eax\n");
-						write_asm("mov [%s],eax\n",it3->first.c_str());
+						if(it3->second.s=="int_arr"&&it3->second.n!=0)
+						{
+							write_asm("mov eax,$arr?%s\n",it3->first.c_str());
+							write_asm("mov ebx,%d\n",it3->second.n);
+							write_asm("call _?batch_pop\n");
+						}
+						//write_asm("pop eax\n");
+						write_asm("pop dword [$%s]\n",it3->first.c_str());
 					}
 					if(it3==vb.begin()) break;
 				}

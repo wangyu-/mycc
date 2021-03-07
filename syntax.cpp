@@ -483,7 +483,7 @@ line1:
 		}
 		s=t;return 0;
 	}
-	int okA/*=*/(cptr &s,gptr &g)
+	int okA_notused/*=*/(cptr &s,gptr &g)  //left associate version
 	{
 		cptr t=s;
 		gptr gt,g1,g2;
@@ -506,6 +506,34 @@ line1:
 			}
 			g=g1;
 			return 1;
+		}
+		s=t;return 0;
+	}
+	int okA/*=*/(cptr &s,gptr &g) //right associate version
+	{
+		cptr t=s;
+		gptr gt,g1,g2;
+		string o;
+		if(okE(s,gt))
+		{
+			gptr g1=gt;
+			if(rd(s,"=",o))
+			{
+				if(okA(s,gt))
+				{
+					g2=new grammar_t;
+					g2->n=o;
+					g2->l.push_back(g1);
+					g2->l.push_back(gt);
+					g=g2;
+					return 1;
+				}
+			}
+			else
+			{
+				g=gt;
+				return 1;
+			}
 		}
 		s=t;return 0;
 	}
@@ -629,7 +657,7 @@ line1:
 		s=t;
 		return okL(s,g);
 	}
-	int okL_notused/*[]*/(cptr &s,gptr &g)
+	int okL_notused/*[]*/(cptr &s,gptr &g) //old
 	{
 		gptr gt,gt2,g1,g2;
 		cptr t=s;
