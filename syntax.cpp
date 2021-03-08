@@ -641,16 +641,22 @@ line1:
 		}
 		s=t;return 0;
 	}
-	int okJ/*!*/(cptr &s,gptr &g)
+	int okJ/*!&*-*/(cptr &s,gptr &g)
 	{
 		gptr gt,g1,g2;
 		cptr t=s;
 		string o;
-		if(rd(s,"!",o)||rd(s,"&",o)||rd(s,"*",o))
+		if(rd(s,"!",o)||rd(s,"&",o)||rd(s,"*",o)||rd(s,"-",o))
 			if(okL(s,gt))
 			{
 				g=new grammar_t;
 				g->n=o;
+				if(o=="-")
+				{
+					g1=new grammar_t;
+					g1->n="0";
+					g->l.push_back(g1);
+				}
 				g->l.push_back(gt);
 				return 1;
 			}
