@@ -6,9 +6,9 @@ A tiny C compiler of 2k lines of codes, generates pure x86 asm code for DOS/Win3
 ![image](images/helloworld2.png)
 ![image](images/helloworld3.png)
 
-Mycc supports a reasonable subset of the C language. Check [tests](https://github.com/wangyu-/mycc/tree/master/tests) and [examples](https://github.com/wangyu-/mycc/tree/master/examples) folder to get an idea of what mycc can compile. Below are some examples: 
+Mycc supports a reasonable subset of the C language. Check [tests](https://github.com/wangyu-/mycc/tree/multi-file/tests) and [examples](https://github.com/wangyu-/mycc/tree/multi-file/examples) folder to get an idea of what mycc can compile. Below are some examples: 
 
-[nqueen.c](https://github.com/wangyu-/mycc/blob/master/examples/nqueen.c) is a mycc-compilable program that finds a solution for the n queen puzzle:
+[nqueen.c](https://github.com/wangyu-/mycc/blob/multi-file/examples/nqueen.c) is a mycc-compilable program that finds a solution for the n queen puzzle:
 
 ```
  Q . . . . . . .
@@ -21,7 +21,7 @@ Mycc supports a reasonable subset of the C language. Check [tests](https://githu
  . . . Q . . . .
 ```
 
-[sudoku.c](https://github.com/wangyu-/mycc/blob/master/examples/sudoku.c) is a mycc-compilable program that fills the sudoku game for you:
+[sudoku.c](https://github.com/wangyu-/mycc/blob/multi-file/examples/sudoku.c) is a mycc-compilable program that fills the sudoku game for you:
 ```
 input:                                       output:
  1 . 3 | . . . | 5 . 9                       1 4 3 | 6 2 8 | 5 7 9
@@ -57,7 +57,7 @@ char getc()
 }
 ```
 
-Mycc is shipped with a built-in library (check [lib](https://github.com/wangyu-/mycc/tree/master/lib) and [lib.platform](https://github.com/wangyu-/mycc/tree/master/lib.platform)), implemented in the language of mycc itself.  Becasue of this, unlike most other tiny compilers, mycc generates "pure asm" codes that runs independently, without the need of linking to external libraries (e.g. libc). 
+Mycc is shipped with a built-in library (check [lib](https://github.com/wangyu-/mycc/tree/multi-file/lib) and [lib.platform](https://github.com/wangyu-/mycc/tree/multi-file/lib.platform)), implemented in the language of mycc itself.  Becasue of this, unlike most other tiny compilers, mycc generates "pure asm" codes that runs independently, without the need of linking to external libraries (e.g. libc). 
 
 # How to use
 make sure you have `nasm` installed.
